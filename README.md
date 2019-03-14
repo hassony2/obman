@@ -38,9 +38,18 @@ obman/
 
 # Load samples
 
-`python readataset --root /path/to/obman --shapnet_root /path/to/ShapeNetCore.v2 --split test --viz`
+`python readataset --root /path/to/obman --shapenet_root /path/to/ShapeNetCore.v2 --split test --viz`
 
 Options you might be interested in `--segment` which keeps only the foreground `--mini_factor 0.01` to load only 1% of the data (to speed-up loading)
 
+## Visualizations
+
+### Hand object and mesh in camera coordinates
+
 ![image](assets/viz3d.png)
+
+### Projected in pixel space
+
+Hand vertices in blue, object vertices in red.
+
 ![image](assets/viz2d.png)
