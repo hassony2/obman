@@ -38,6 +38,6 @@ obman/
 
 # Load samples
 
-`python readataset --root /path/to/obman --split test --viz`
+`python readataset --root /path/to/obman --shapnet_root /path/to/ShapeNetCore.v2 --split test --viz`
 
 Options you might be interested in `--segment` which keeps only the foreground `--mini_factor 0.01` to load only 1% of the data (to speed-up loading)

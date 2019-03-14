@@ -7,6 +7,7 @@ from obman.visutils import visualize_2d, visualize_3d
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--root', required=True, help="Path to dataset root")
+parser.add_argument('--shapenet_root', required=True, help="Path to root of ShapeNetCore.v2")
 parser.add_argument(
     '--split', type=str, default='train', help='Usually [train|test]')
 parser.add_argument(
@@ -20,8 +21,6 @@ parser.add_argument(
     '--img_nb', type=int, default='10', help='Number of images to display')
 parser.add_argument(
     '--img_step', type=int, default='1', help='Number of images to display')
-parser.add_argument(
-    '--joint_idxs', action='store_true', help='Display joint indexes')
 parser.add_argument('--segment', action='store_true')
 parser.add_argument(
     '--mini_factor', type=float, help='Ratio in data to use (in ]0, 1[)')
@@ -34,6 +33,7 @@ args = parser.parse_args()
 
 pose_dataset = ObMan(
     args.root,
+    args.shapenet_root,
     split=args.split,
     use_cache=args.use_cache,
     root_palm=args.root_palm,

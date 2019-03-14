@@ -7,16 +7,17 @@ import numpy as np
 from PIL import Image, ImageFile
 from tqdm import tqdm
 
-from handobjectdatasets import handutils
-from handobjectdatasets.loadutils import fast_load_obj
+from obman import handutils
+from obman.loadutils import fast_load_obj
+from obman.coordutils import get_coords_2d
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-from obman.coordutils import get_coords_2d
 
 
 class ObMan():
     def __init__(self,
                  root,
+                 shapenet_root,
                  split='train',
                  joint_nb=21,
                  mini_factor=None,
@@ -32,6 +33,10 @@ class ObMan():
         self.mode = mode
         self.segment = segment
         self.root = os.path.join(root, split)
+
+        if shapenet_root.endswith('/'):
+            shapenet_root = shapenet_root[:-1]
+        self.shapenet_root = shapenet_root
 
         self.use_external_points = use_external_points
         if mode == 'all':
@@ -346,6 +351,9 @@ class ObMan():
 
     def get_obj_verts_faces(self, idx):
         model_path = self.obj_paths[idx]
+        model_path = model_path.replace(
+            '/sequoia/data2/dataset/shapenet/ShapeNetCore.v2',
+            self.shapenet_root)
         if model_path.endswith('.pkl'):
             with open(model_path, 'rb') as obj_f:
                 mesh = pickle.load(obj_f)
