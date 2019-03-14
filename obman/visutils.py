@@ -15,6 +15,7 @@ def visualize_2d(img,
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.imshow(img)
+    ax.axis('off')
     if hand_joints is not None:
         viz2d.visualize_joints_2d(
             ax, hand_joints, joint_idxs=False, links=links)
@@ -33,6 +34,7 @@ def visualize_3d(img,
     fig = plt.figure()
     ax = fig.add_subplot(121)
     ax.imshow(img)
+    ax.axis('off')
     ax = fig.add_subplot(122, projection='3d')
     add_mesh(ax, hand_verts, hand_faces)
     add_mesh(ax, obj_verts, obj_faces, c='r')
