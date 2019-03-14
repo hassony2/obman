@@ -7,7 +7,8 @@ from obman.visutils import visualize_2d, visualize_3d
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--root', required=True, help="Path to dataset root")
-parser.add_argument('--shapenet_root', required=True, help="Path to root of ShapeNetCore.v2")
+parser.add_argument(
+    '--shapenet_root', required=True, help="Path to root of ShapeNetCore.v2")
 parser.add_argument(
     '--split', type=str, default='train', help='Usually [train|test]')
 parser.add_argument(
