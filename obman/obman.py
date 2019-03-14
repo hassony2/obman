@@ -1,50 +1,44 @@
-import json
 import os
 import pickle
 from collections import Counter
-import warnings
 
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
 from PIL import Image, ImageFile
-import scipy
 from tqdm import tqdm
 
 from handobjectdatasets import handutils
 from handobjectdatasets.loadutils import fast_load_obj
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
+from obman.coordutils import get_coords_2d
 
 
 class ObMan():
-    def __init__(
-            self,
-            version,
-            split='train',
-            root=None,
-            joint_nb=21,
-            mini_factor=None,
-            use_cache=False,
-            root_palm=False,
-            mode='all',
-            segment=False,
-            use_external_points=True,
-            apply_obj_transform=True):
+    def __init__(self,
+                 root,
+                 split='train',
+                 joint_nb=21,
+                 mini_factor=None,
+                 use_cache=False,
+                 root_palm=False,
+                 mode='all',
+                 segment=False,
+                 use_external_points=True,
+                 apply_obj_transform=True):
         # Set cache path
         self.split = split
-        self.version = version
         self.root_palm = root_palm
         self.mode = mode
         self.segment = segment
-        self.root = root
+        self.root = os.path.join(root, split)
 
         self.use_external_points = use_external_points
         if mode == 'all':
             self.rgb_folder = os.path.join(self.root, "rgb")
-        if mode == 'obj':
+        elif mode == 'obj':
             self.rgb_folder = os.path.join(self.root, "rgb_obj")
-        if mode == 'hand':
+        elif mode == 'hand':
             self.rgb_folder = os.path.join(self.root, "rgb_hand")
         else:
             raise ValueError(
@@ -52,9 +46,9 @@ class ObMan():
 
         # Cache information
         self.use_cache = use_cache
-        self.name = 'synthgraps'
-        self.cache_folder = os.path.join('data', 'cache', '{}_v{}'.format(
-            self.name, version))
+        self.name = 'obman'
+        self.cache_folder = os.path.join('data', 'cache',
+                                         '{}'.format(self.name))
         os.makedirs(self.cache_folder, exist_ok=True)
         self.mini_factor = mini_factor
         self.cam_intr = np.array([[480., 0., 128.], [0., 480., 128.],
@@ -74,7 +68,12 @@ class ObMan():
         self.links = [(0, 1, 2, 3, 4), (0, 5, 6, 7, 8), (0, 9, 10, 11, 12),
                       (0, 13, 14, 15, 16), (0, 17, 18, 19, 20)]
 
-        # Object info
+        # Load mano faces
+        self.faces = {}
+        for side in ['left', 'right']:
+            with open('mano_faces_{}.pkl'.format(side), 'rb') as p_f:
+                self.faces[side] = pickle.load(p_f)
+
         self.shapenet_template = '/sequoia/data2/dataset/shapenet/ShapeNetCore.v2/{}/{}/models/model_normalized.pkl'
         self.load_dataset()
 
@@ -88,8 +87,8 @@ class ObMan():
         if not os.path.exists(pkl_path):
             pkl_path = '../' + pkl_path
         cache_path = os.path.join(
-            self.cache_folder, '{}_{}_v{}_mode_{}.pkl'.format(
-                self.split, self.mini_factor, self.version, self.mode))
+            self.cache_folder, '{}_{}_mode_{}.pkl'.format(
+                self.split, self.mini_factor, self.mode))
         if os.path.exists(cache_path) and self.use_cache:
             with open(cache_path, 'rb') as cache_f:
                 annotations = pickle.load(cache_f)
@@ -148,7 +147,7 @@ class ObMan():
                     })
                     obj_path = self._get_obj_path(meta_info['class_id'],
                                                   meta_info['sample_id'])
-                    
+
                     obj_paths.append(obj_path)
                     obj_transforms.append(meta_info['affine_transform'])
 
@@ -165,8 +164,6 @@ class ObMan():
                         meta_info_full['grasp_volume'] = meta_info[
                             'grasp_volume']
                     meta_infos.append(meta_info_full)
-                    import pdb
-                    pdb.set_trace()
 
             annotations = {
                 'depth_infos': depth_infos,
@@ -278,6 +275,7 @@ class ObMan():
             img[~segm_img.astype(bool).repeat(3, 2)] = 0
             img = Image.fromarray(img[:, :, ::-1])
         else:
+            img = Image.open(image_path)
             img = img.convert('RGB')
         return img
 
@@ -322,12 +320,29 @@ class ObMan():
             self.cam_extr[:, 3]) == 0, 'extr camera should have no translation'
 
         joints3d = self.cam_extr[:3, :3].dot(joints3d.transpose()).transpose()
-        return 1000 * joints3d
+        return joints3d
 
     def get_verts3d(self, idx):
         verts3d = self.hand_verts3d[idx]
         verts3d = self.cam_extr[:3, :3].dot(verts3d.transpose()).transpose()
-        return 1000 * verts3d
+        return verts3d
+
+    def get_faces3d(self, idx):
+        faces = self.faces[self.get_sides(idx)]
+        return faces
+
+    def get_verts2d(self, idx):
+        verts3d = self.get_verts3d(idx)
+        verts2d = get_coords_2d(
+            verts3d, cam_extr=None, cam_calib=self.cam_intr)
+        return verts2d
+
+    def get_obj_verts2d(self, idx):
+        verts3d, _ = self.get_obj_verts_faces(idx)
+        verts3d = verts3d
+        verts2d = get_coords_2d(
+            verts3d, cam_extr=None, cam_calib=self.cam_intr)
+        return verts2d
 
     def get_obj_verts_faces(self, idx):
         model_path = self.obj_paths[idx]
@@ -342,16 +357,15 @@ class ObMan():
                 'Extension of mesh should be in [pkl|obj], got {}'.format(
                     model_path.split('.')[-1]))
 
-        obj_scale = self.meta_infos[idx]['obj_scale']
-        verts = mesh['vertices'] * obj_scale
+        verts = mesh['vertices']
         # Apply transforms
         obj_transform = self.obj_transforms[idx]
-        hom_verts = np.concatenate(
-            [verts, np.ones([verts.shape[0], 1])], axis=1)
+        hom_verts = np.concatenate([verts, np.ones([verts.shape[0], 1])],
+                                   axis=1)
         trans_verts = obj_transform.dot(hom_verts.T).T[:, :3]
         trans_verts = self.cam_extr[:3, :3].dot(
             trans_verts.transpose()).transpose()
-        return np.array(trans_verts).astype(np.float32) * 1000, np.array(
+        return np.array(trans_verts).astype(np.float32), np.array(
             mesh['faces']).astype(np.int16)
 
     def get_objpoints3d(self, idx, point_nb=600):
@@ -362,13 +376,12 @@ class ObMan():
 
         # Filter very far outlier points from modelnet/shapenet !!
         point_nb_or = points.shape[0]
-        points = points[np.linalg.norm(points, 2, 1) <
-                        20 * np.median(np.linalg.norm(points, 2, 1))]
+        points = points[np.linalg.norm(points, 2, 1) < 20 *
+                        np.median(np.linalg.norm(points, 2, 1))]
         if points.shape[0] < point_nb_or:
-            print(
-                'Filtering {} points out of {} for sample {} from split {} v{}'.
-                format(point_nb_or - points.shape[0], point_nb_or,
-                       self.image_names[idx], self.split, self.version))
+            print('Filtering {} points out of {} for sample {} from split {}'.
+                  format(point_nb_or - points.shape[0], point_nb_or,
+                         self.image_names[idx], self.split))
         # Sample points
         idxs = np.random.choice(points.shape[0], point_nb)
         points = points[idxs]
@@ -382,7 +395,7 @@ class ObMan():
                 trans_points.transpose()).transpose()
         else:
             trans_points = points
-        return trans_points.astype(np.float32) * 1000
+        return trans_points.astype(np.float32)
 
     def get_sides(self, idx):
         return self.hand_sides[idx]
