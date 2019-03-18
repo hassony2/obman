@@ -44,8 +44,10 @@ pose_dataset = ObMan(
 
 for i in tqdm(range(0, args.img_nb, args.img_step)):
     img_idx = args.img_idx + i
-    img = pose_dataset.get_image(img_idx)
+    hand_verts3d_mano = pose_dataset.get_mano(img_idx)
     hand_verts3d = pose_dataset.get_verts3d(img_idx)
+    # Visualizing hand_verts3d_mano and hand_verts3d gives visually similar results, although numerically slightly different
+    img = pose_dataset.get_image(img_idx)
     hand_faces = pose_dataset.get_faces3d(img_idx)
     obj_verts3d, obj_faces = pose_dataset.get_obj_verts_faces(img_idx)
     hand_joints2d = pose_dataset.get_joints2d(img_idx)

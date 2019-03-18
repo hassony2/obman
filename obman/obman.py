@@ -116,13 +116,13 @@ class ObMan():
             all_joints2d = []
             all_joints3d = []
             hand_sides = []
-            hand_poses = []
             hand_pcas = []
             hand_verts3d = []
             obj_paths = []
             obj_transforms = []
             meta_infos = []
             depth_infos = []
+            mano_infos = []
             for idx, prefix in enumerate(tqdm(prefixes)):
                 meta_path = os.path.join(self.meta_folder,
                                          '{}.pkl'.format(prefix))
@@ -134,8 +134,15 @@ class ObMan():
                     all_joints3d.append(meta_info['coords_3d'])
                     hand_verts3d.append(meta_info['verts_3d'])
                     hand_sides.append(meta_info['side'])
-                    hand_poses.append(meta_info['hand_pose'])
                     hand_pcas.append(meta_info['pca_pose'])
+                    mano_infos.append({
+                        'trans':
+                        meta_info['hand_trans'],
+                        'hand_pose':
+                        meta_info['hand_pose'],
+                        'global_rot':
+                        meta_info['hand_global_rot']
+                    })
                     depth_infos.append({
                         'depth_min':
                         meta_info['depth_min'],
@@ -171,12 +178,12 @@ class ObMan():
                     meta_infos.append(meta_info_full)
 
             annotations = {
+                'mano_infos': mano_infos,
                 'depth_infos': depth_infos,
                 'image_names': image_names,
                 'joints2d': all_joints2d,
                 'joints3d': all_joints3d,
                 'hand_sides': hand_sides,
-                'hand_poses': hand_poses,
                 'hand_pcas': hand_pcas,
                 'hand_verts3d': hand_verts3d,
                 'obj_paths': obj_paths,
@@ -211,6 +218,7 @@ class ObMan():
         joints2d = [annotations['joints2d'][idx] for idx in selected_idxs]
         hand_sides = [annotations['hand_sides'][idx] for idx in selected_idxs]
         hand_pcas = [annotations['hand_pcas'][idx] for idx in selected_idxs]
+        mano_infos = [annotations['mano_infos'][idx] for idx in selected_idxs]
         hand_verts3d = [
             annotations['hand_verts3d'][idx] for idx in selected_idxs
         ]
@@ -245,6 +253,7 @@ class ObMan():
         self.obj_paths = obj_paths
         self.obj_transforms = obj_transforms
         self.meta_infos = meta_infos
+        self.mano_infos = mano_infos
         # Initialize cache for center and scale in case objects are used
         self.center_scale_cache = {}
 
@@ -373,6 +382,7 @@ class ObMan():
         trans_verts = obj_transform.dot(hom_verts.T).T[:, :3]
         trans_verts = self.cam_extr[:3, :3].dot(
             trans_verts.transpose()).transpose()
+
         return np.array(trans_verts).astype(np.float32), np.array(
             mesh['faces']).astype(np.int16)
 
@@ -472,6 +482,25 @@ class ObMan():
 
     def __len__(self):
         return len(self.image_names)
+
+    def get_mano(self, idx):
+        mano_info = self.mano_infos[idx]
+        from mano.webuser.serialization import load_model
+        mano_right_path = os.path.join('/sequoia/data1/yhasson/code/pose_3d/mano_render', 'assets', 'models', 'MANO_RIGHT.pkl')
+        mano_model = load_model(mano_right_path)
+        mano_model.trans[:] = mano_info['trans']
+        mano_model.pose[:] = mano_info['hand_pose']
+        verts = mano_model.r
+
+        obj_scale = self.meta_infos[idx]['obj_scale']
+        verts = verts / obj_scale
+        obj_transform = self.obj_transforms[idx]
+        hom_verts = np.concatenate([verts, np.ones([verts.shape[0], 1])],
+                                   axis=1)
+        trans_verts = obj_transform.dot(hom_verts.T).T[:, :3]
+        trans_verts = self.cam_extr[:3, :3].dot(
+            trans_verts.transpose()).transpose()
+        return trans_verts
 
 
 def _get_segm(img, side='left'):
