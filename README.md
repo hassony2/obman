@@ -12,8 +12,8 @@ ObMan dataset
 
 ## Download dataset images and data
 
-- https://filesender.renater.fr/?s=download&token=0c346377-4d7c-d9c9-5c60-f2cf6a93fe65
-- unzip test.zip and val.zip to /path/to/obman
+- https://filesender.renater.fr/?s=download&token=95222f3b-8352-b59e-aec7-226b8507d3c0
+- unzip obman.zip to /path/to/obman
 - Your dataset structure should look like
 
 ```
