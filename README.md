@@ -3,19 +3,9 @@ ObMan dataset
 
 # Download required files
 
-## Get data
-
-Request the dataset on the [ObMan webpage](https://www.di.ens.fr/willow/research/obman/data/)
-
-## Download object meshes
-
-- Download object models from ShapeNet
-  - Create an account on [shapenet.org](https://www.shapenet.org)
-  - Download models from [download page](https://www.shapenet.org/download/shapenetcore)
-
 ## Download dataset images and data
 
-- https://filesender.renater.fr/?s=download&token=fea9d552-6eca-35e2-d6fb-8e7dcf4230a2
+- Request the dataset on the [ObMan webpage](https://www.di.ens.fr/willow/research/obman/data/)
 - unzip obman.zip to /path/to/obman
 - Your dataset structure should look like
 
@@ -32,6 +22,13 @@ obman/
     meta/
     ...
 ```
+
+## Download object meshes
+
+- Download object models from ShapeNet
+  - Create an account on [shapenet.org](https://www.shapenet.org)
+  - Download models from [download page](https://www.shapenet.org/download/shapenetcore)
+
 
 # Download code
 
