@@ -3,6 +3,9 @@ ObMan dataset
 
 # Download required files
 
+## Get data
+
+Request the dataset on the [ObMan webpage](https://www.di.ens.fr/willow/research/obman/data/)
 
 ## Download object meshes
 
