@@ -15,7 +15,7 @@ Request the dataset on the [ObMan webpage](https://www.di.ens.fr/willow/research
 
 ## Download dataset images and data
 
-- https://filesender.renater.fr/?s=download&token=95222f3b-8352-b59e-aec7-226b8507d3c0
+- https://filesender.renater.fr/?s=download&token=fea9d552-6eca-35e2-d6fb-8e7dcf4230a2
 - unzip obman.zip to /path/to/obman
 - Your dataset structure should look like
 
