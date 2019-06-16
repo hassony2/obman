@@ -5,7 +5,7 @@ ObMan dataset
 
 ## Download dataset images and data
 
-- Request the dataset on the [ObMan webpage](https://www.di.ens.fr/willow/research/obman/data/)
+- Request the dataset on the [ObMan webpage](https://www.di.ens.fr/willow/research/obman/data/). Note that the data falls under the following [license](https://www.di.ens.fr/willow/research/obman/data/license.html)
 - unzip obman.zip to /path/to/obman
 - Your dataset structure should look like
 
