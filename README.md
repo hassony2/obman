@@ -1,6 +1,10 @@
 ObMan dataset
 =============
 
+
+- [Project page](https://hassony2.github.io/obman)
+- [Training code and model](https://hassony2.github.io/obman_train)
+
 # Download required files
 
 ## Download dataset images and data
