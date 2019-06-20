@@ -1,6 +1,6 @@
-ObMan dataset
-=============
+# Learning Joint Reconstruction of Hands and Manipulated Objects - ObMan dataset
 
+Yana Hasson, Gül Varol, Dimitris Tzionas, Igor Kalevatykh, Michael J. Black,  Ivan Laptev, Cordelia Schmid, CVPR 2019
 
 - [Project page](https://hassony2.github.io/obman)
 - [Training code and model](https://hassony2.github.io/obman_train)
@@ -57,3 +57,17 @@ Options you might be interested in `--segment` which keeps only the foreground `
 Hand vertices in blue, object vertices in red.
 
 ![image](assets/viz2d.png)
+
+
+# Citations
+
+If you find this dataset useful for your research, consider citing:
+
+```
+@INPROCEEDINGS{hasson19_obman,
+  title     = {Learning joint reconstruction of hands and manipulated objects},
+  author    = {Hasson, Yana and Varol, G{\"u}l and Tzionas, Dimitris and Kalevatykh, Igor and Black, Michael J. and Laptev, Ivan and Schmid, Cordelia},
+  booktitle = {CVPR},
+  year      = {2019}
+}
+```
