@@ -46,6 +46,12 @@ obman/
 
 Options you might be interested in `--segment` which keeps only the foreground `--mini_factor 0.01` to load only 1% of the data (to speed-up loading)
 
+# Preprocess shapenet objects for training
+
+Sample points on the external surface of the object:
+
+`python shapenet_samplepoints.py`
+
 ## Visualizations
 
 ### Hand object and mesh in camera coordinates

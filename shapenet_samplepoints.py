@@ -20,14 +20,13 @@ def create_ray_samples(sample_path,
                        volumic=False,
                        display=False):
     try:
-        # if os.path.exist(sample_path):
-        if False:
+        if os.path.exist(sample_path):
             with open(sample_path, 'rb') as obj_f:
                 mesh_dict = pickle.load(obj_f)
         else:
             with open(sample_path.replace('.pkl', '.obj'), 'r') as obj_f:
                 mesh_dict = fast_load_obj(obj_f)[0]
-            print('Loaded {}'.format(sample_path))
+        print('Loaded {}'.format(sample_path))
 
         mesh = trimesh.load(mesh_dict)
         tri = Delaunay(mesh_dict['vertices'])
@@ -72,7 +71,7 @@ def create_ray_samples(sample_path,
 if __name__ == "__main__":
     # selected_csv = '/sequoia/data2/dataset/shapenet/selected_atlas.csv'
     parser = argparse.ArgumentParser()
-    parser.add_argument('--group_by', default=100, type=int)
+    parser.add_argument('--group_by', default=4000, type=int)
     parser.add_argument('--start_idx', default=0, type=int)
     args = parser.parse_args()
     selected_csv = 'assets/shapenet_select.csv'
