@@ -79,7 +79,7 @@ class ObMan():
             with open('mano_faces_{}.pkl'.format(side), 'rb') as p_f:
                 self.faces[side] = pickle.load(p_f)
 
-        self.shapenet_template = '/sequoia/data2/dataset/shapenet/ShapeNetCore.v2/{}/{}/models/model_normalized.obj'
+        self.shapenet_template = '/sequoia/data2/dataset/shapenet/ShapeNetCore.v2/{}/{}/models/model_normalized.pkl'
         self.load_dataset()
 
     def _get_image_path(self, prefix):
@@ -354,8 +354,17 @@ class ObMan():
         model_path = model_path.replace(
             '/sequoia/data2/dataset/shapenet/ShapeNetCore.v2',
             self.shapenet_root)
-        with open(model_path, 'r') as m_f:
-            mesh = fast_load_obj(m_f)[0]
+        model_path_obj = model_path.replace('.pkl', '.obj')
+        if os.path.exists(model_path):
+            with open(model_path, 'rb') as obj_f:
+                mesh = pickle.load(obj_f)
+        elif os.path.exists(model_path_obj):
+            with open(model_path_obj, 'r') as m_f:
+                mesh = fast_load_obj(m_f)[0]
+        else:
+            raise ValueError(
+                'Could not find model pkl or obj file at {}'.format(
+                    model_path.split('.')[-2]))
 
         verts = mesh['vertices']
         # Apply transforms
