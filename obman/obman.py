@@ -79,7 +79,7 @@ class ObMan():
             with open('mano_faces_{}.pkl'.format(side), 'rb') as p_f:
                 self.faces[side] = pickle.load(p_f)
 
-        self.shapenet_template = '/sequoia/data2/dataset/shapenet/ShapeNetCore.v2/{}/{}/models/model_normalized.pkl'
+        self.shapenet_template = '/sequoia/data2/dataset/shapenet/ShapeNetCore.v2/{}/{}/models/model_normalized.obj'
         self.load_dataset()
 
     def _get_image_path(self, prefix):
@@ -354,16 +354,8 @@ class ObMan():
         model_path = model_path.replace(
             '/sequoia/data2/dataset/shapenet/ShapeNetCore.v2',
             self.shapenet_root)
-        if model_path.endswith('.pkl'):
-            with open(model_path, 'rb') as obj_f:
-                mesh = pickle.load(obj_f)
-        elif model_path.endswith('.obj'):
-            with open(model_path, 'r') as m_f:
-                mesh = fast_load_obj(m_f)[0]
-        else:
-            raise ValueError(
-                'Extension of mesh should be in [pkl|obj], got {}'.format(
-                    model_path.split('.')[-1]))
+        with open(model_path, 'r') as m_f:
+            mesh = fast_load_obj(m_f)[0]
 
         verts = mesh['vertices']
         # Apply transforms
@@ -377,7 +369,7 @@ class ObMan():
             mesh['faces']).astype(np.int16)
 
     def get_objpoints3d(self, idx, point_nb=600):
-        model_path = self.obj_paths[idx].replace('model_normalized.pkl',
+        model_path = self.obj_paths[idx].replace('model_normalized.obj',
                                                  'surface_points.pkl')
         with open(model_path, 'rb') as obj_f:
             points = pickle.load(obj_f)

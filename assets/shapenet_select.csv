@@ -1,0 +1,10 @@
+class,path,instance_nb
+mug,/sequoia/data2/dataset/shapenet/ShapeNetCore.v2/03797390,214
+bottle,/sequoia/data2/dataset/shapenet/ShapeNetCore.v2/02876657,498
+bowl,/sequoia/data2/dataset/shapenet/ShapeNetCore.v2/02880940,186
+can,/sequoia/data2/dataset/shapenet/ShapeNetCore.v2/02946921,108
+jar,/sequoia/data2/dataset/shapenet/ShapeNetCore.v2/03593526,596
+knife,/sequoia/data2/dataset/shapenet/ShapeNetCore.v2/03624134,424
+cellphone,/sequoia/data2/dataset/shapenet/ShapeNetCore.v2/02992529,831
+camera,/sequoia/data2/dataset/shapenet/ShapeNetCore.v2/02942699,113
+remote,/sequoia/data2/dataset/shapenet/ShapeNetCore.v2/04074963,66
