@@ -3,7 +3,8 @@
 Yana Hasson, Gül Varol, Dimitris Tzionas, Igor Kalevatykh, Michael J. Black,  Ivan Laptev, Cordelia Schmid, CVPR 2019
 
 - [Project page](https://hassony2.github.io/obman)
-- [Training code and model](https://hassony2.github.io/obman_train)
+- [Training code and model](https://github.com/hassony2/obman_train)
+- [Dataset generation](https://github.com/hassony2/obman_render)
 
 # Download required files
 
