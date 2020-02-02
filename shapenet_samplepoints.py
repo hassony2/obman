@@ -20,7 +20,7 @@ def create_ray_samples(sample_path,
                        volumic=False,
                        display=False):
     try:
-        if os.path.exist(sample_path):
+        if os.path.exists(sample_path):
             with open(sample_path, 'rb') as obj_f:
                 mesh_dict = pickle.load(obj_f)
         else:
