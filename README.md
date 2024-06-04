@@ -12,6 +12,7 @@ Yana Hasson, Gül Varol, Dimitris Tzionas, Igor Kalevatykh, Michael J. Black,  I
 ## Download dataset images and data
 
 - Request the dataset on the [ObMan webpage](https://www.di.ens.fr/willow/research/obman/data/). Note that the data falls under the following [license](https://www.di.ens.fr/willow/research/obman/data/license.html)
+- Once you have approved the license. You then need to send an e-mail to yana.hasson.inria@gmail.com with "ObMan data request" as subject.
 - unzip obman.zip to /path/to/obman
 - Your dataset structure should look like
 
